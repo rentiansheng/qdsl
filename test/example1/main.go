@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
@@ -65,11 +66,17 @@ func (l *lex) Lex(yylval *yySymType) (a int) {
 			return l.scanLiteral(yylval)
 		default:
 			if isOp, ok := symbolTypeRela[c]; ok {
-				if isOp {
-					l.state = lexStateValue
-				}
 				yylval.op = string(c)
 				yylval.val = string(c)
+				if isOp {
+					l.state = lexStateValue
+				} else if c == '(' {
+					if l.state == lexStateField {
+						return ConditionGroupFlag
+					} else {
+						return BetweenFlag
+					}
+				}
 				return int(c)
 			}
 			l.input.UnreadRune()
@@ -288,11 +295,13 @@ func main() {
 		`a = b and d in [1,2,3] and c > 2 and d != 3 `,
 		`a = b and d in [1,2,3] and c > 2 and d < 3 `,
 		`a = b and d between (1,3) and c > 2 and d <= 3 `,
+		`(a = b or c = d) and d in [1,2,3] and c > 2 and d <= 3 `,
 	}
 	for _, sql := range sqlArr {
 		l := newLex([]byte(sql + " "))
 		yyParse(l)
-		fmt.Println("sql: ", sql, "parese result: ", l.result)
+		byteResults, err := json.Marshal(l.result)
+		fmt.Println("sql: ", sql, "parese result: ", string(byteResults), "err", err)
 	}
 
 }

@@ -4,7 +4,7 @@
 package main
 
 import (
-  )
+   )
 
 
 %}
@@ -15,15 +15,17 @@ import (
   val interface{}
   list []interface{}
   op string
+  flag string
   errMsg string
 }
 
 
 %token <val> String Number Literal
 %token <op> OpType JointType OpTypeBetween
+%token <flag> ConditionGroupFlag   BetweenFlag
 %type <val> array between
 %type <list> elements
-%type <obj> object input expr
+%type <obj> object input expr expr_group
 %type <val> value
 %type <op> OpType  JointType
 
@@ -32,11 +34,12 @@ import (
 %%
 
 input: object{
+
         yylex.(*lex).result = $$
 
 }
 
-object: expr| object JointType expr {
+object: expr|expr_group| object JointType expr {
    	obj := $$
 	obj = append(obj,
 		map[string]interface{}{"condition": $3},
@@ -46,22 +49,32 @@ object: expr| object JointType expr {
 
 }
 
+expr_group: ConditionGroupFlag object ')' {
+ 	obj := $$
+	obj = append(obj, map[string]interface{}{"condition": $2})
+	$$ = obj
+	yylex.(*lex).state = lexStateJoint
+}
+
 
 expr: String OpType value {
+
       	$$ =  []map[string]interface{}{ {$1.(string): map[string]interface{}{ $2:   $3}}}
 
       	yylex.(*lex).state = lexStateJoint
       } | String '=' value {
+
       	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "=":   $3}}}
       	yylex.(*lex).state = lexStateJoint
 
       } |  String OpTypeBetween between {
+
       	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "between":   $3}}}
       	yylex.(*lex).state = lexStateJoint
       }
 
-between : '(' elements ')' {
-	yylex.(*lex).state = LexStateValueElement
+between : BetweenFlag elements ')' {
+ 	yylex.(*lex).state = LexStateValueElement
 	$$ = $2
   	yylex.(*lex).state = lexStateJoint
 }
