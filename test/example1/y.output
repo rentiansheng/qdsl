@@ -2,11 +2,12 @@
 state 0
 	$accept: .input $end 
 
-	String  shift 3
+	String  shift 4
 	.  error
 
 	object  goto 2
 	input  goto 1
+	expr  goto 3
 
 state 1
 	$accept:  input.$end 
@@ -17,284 +18,233 @@ state 1
 
 state 2
 	input:  object.    (1)
-	object:  object.JointType String OpType value 
-	object:  object.JointType String '=' value 
-	object:  object.JointType String OpTypeBetween between 
+	object:  object.JointType expr 
 
-	JointType  shift 4
+	JointType  shift 5
 	.  reduce 1 (src line 34)
 
 
 state 3
-	object:  String.OpType value 
-	object:  String.'=' value 
-	object:  String.OpTypeBetween between 
-
-	OpType  shift 5
-	OpTypeBetween  shift 7
-	'='  shift 6
-	.  error
-
-
-state 4
-	object:  object JointType.String OpType value 
-	object:  object JointType.String '=' value 
-	object:  object JointType.String OpTypeBetween between 
-
-	String  shift 8
-	.  error
-
-
-state 5
-	object:  String OpType.value 
-
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  error
-
-	array  goto 14
-	object  goto 13
-	value  goto 9
-
-state 6
-	object:  String '='.value 
-
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  error
-
-	array  goto 14
-	object  goto 13
-	value  goto 16
-
-state 7
-	object:  String OpTypeBetween.between 
-
-	'('  shift 18
-	.  error
-
-	between  goto 17
-
-state 8
-	object:  object JointType String.OpType value 
-	object:  object JointType String.'=' value 
-	object:  object JointType String.OpTypeBetween between 
-
-	OpType  shift 19
-	OpTypeBetween  shift 21
-	'='  shift 20
-	.  error
-
-
-state 9
-	object:  String OpType value.    (2)
+	object:  expr.    (2)
 
 	.  reduce 2 (src line 39)
 
 
-state 10
-	object:  String.OpType value 
-	object:  String.'=' value 
-	object:  String.OpTypeBetween between 
-	value:  String.    (13)
+state 4
+	expr:  String.OpType value 
+	expr:  String.'=' value 
+	expr:  String.OpTypeBetween between 
 
-	OpType  shift 5
-	OpTypeBetween  shift 7
-	'='  shift 6
-	.  reduce 13 (src line 95)
+	OpType  shift 6
+	OpTypeBetween  shift 8
+	'='  shift 7
+	.  error
+
+
+state 5
+	object:  object JointType.expr 
+
+	String  shift 4
+	.  error
+
+	expr  goto 9
+
+state 6
+	expr:  String OpType.value 
+
+	String  shift 11
+	Number  shift 12
+	Literal  shift 13
+	'['  shift 16
+	.  error
+
+	array  goto 15
+	object  goto 14
+	expr  goto 3
+	value  goto 10
+
+state 7
+	expr:  String '='.value 
+
+	String  shift 11
+	Number  shift 12
+	Literal  shift 13
+	'['  shift 16
+	.  error
+
+	array  goto 15
+	object  goto 14
+	expr  goto 3
+	value  goto 17
+
+state 8
+	expr:  String OpTypeBetween.between 
+
+	'('  shift 19
+	.  error
+
+	between  goto 18
+
+state 9
+	object:  object JointType expr.    (3)
+
+	.  reduce 3 (src line 39)
+
+
+state 10
+	expr:  String OpType value.    (4)
+
+	.  reduce 4 (src line 50)
 
 
 state 11
-	value:  Number.    (14)
+	expr:  String.OpType value 
+	expr:  String.'=' value 
+	expr:  String.OpTypeBetween between 
+	value:  String.    (12)
 
-	.  reduce 14 (src line 96)
+	OpType  shift 6
+	OpTypeBetween  shift 8
+	'='  shift 7
+	.  reduce 12 (src line 83)
 
 
 state 12
-	value:  Literal.    (15)
+	value:  Number.    (13)
 
-	.  reduce 15 (src line 97)
+	.  reduce 13 (src line 84)
 
 
-13: shift/reduce conflict (shift 4(0), red'n 16(0)) on JointType
 state 13
-	object:  object.JointType String OpType value 
-	object:  object.JointType String '=' value 
-	object:  object.JointType String OpTypeBetween between 
-	value:  object.    (16)
+	value:  Literal.    (14)
 
-	JointType  shift 4
-	.  reduce 16 (src line 98)
+	.  reduce 14 (src line 85)
 
 
+14: shift/reduce conflict (shift 5(0), red'n 15(0)) on JointType
 state 14
-	value:  array.    (17)
+	object:  object.JointType expr 
+	value:  object.    (15)
 
-	.  reduce 17 (src line 103)
+	JointType  shift 5
+	.  reduce 15 (src line 86)
 
 
 state 15
-	array:  '['.elements ']' 
-	elements: .    (10)
+	value:  array.    (16)
 
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  reduce 10 (src line 87)
+	.  reduce 16 (src line 91)
 
-	array  goto 14
-	elements  goto 22
-	object  goto 13
-	value  goto 23
 
 state 16
-	object:  String '=' value.    (3)
+	array:  '['.elements ']' 
+	elements: .    (9)
 
-	.  reduce 3 (src line 43)
+	String  shift 11
+	Number  shift 12
+	Literal  shift 13
+	'['  shift 16
+	.  reduce 9 (src line 75)
 
+	array  goto 15
+	elements  goto 20
+	object  goto 14
+	expr  goto 3
+	value  goto 21
 
 state 17
-	object:  String OpTypeBetween between.    (4)
+	expr:  String '=' value.    (5)
 
-	.  reduce 4 (src line 47)
+	.  reduce 5 (src line 54)
 
 
 state 18
-	between:  '('.elements ')' 
-	elements: .    (10)
+	expr:  String OpTypeBetween between.    (6)
 
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  reduce 10 (src line 87)
+	.  reduce 6 (src line 58)
 
-	array  goto 14
-	elements  goto 24
-	object  goto 13
-	value  goto 23
 
 state 19
-	object:  object JointType String OpType.value 
+	between:  '('.elements ')' 
+	elements: .    (9)
 
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  error
+	String  shift 11
+	Number  shift 12
+	Literal  shift 13
+	'['  shift 16
+	.  reduce 9 (src line 75)
 
-	array  goto 14
-	object  goto 13
-	value  goto 25
+	array  goto 15
+	elements  goto 22
+	object  goto 14
+	expr  goto 3
+	value  goto 21
 
 state 20
-	object:  object JointType String '='.value 
-
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  error
-
-	array  goto 14
-	object  goto 13
-	value  goto 26
-
-state 21
-	object:  object JointType String OpTypeBetween.between 
-
-	'('  shift 18
-	.  error
-
-	between  goto 27
-
-state 22
 	array:  '[' elements.']' 
 	elements:  elements.',' value 
 
-	']'  shift 28
-	','  shift 29
+	']'  shift 23
+	','  shift 24
+	.  error
+
+
+state 21
+	elements:  value.    (10)
+
+	.  reduce 10 (src line 77)
+
+
+state 22
+	between:  '(' elements.')' 
+	elements:  elements.',' value 
+
+	')'  shift 25
+	','  shift 24
 	.  error
 
 
 state 23
-	elements:  value.    (11)
+	array:  '[' elements ']'.    (8)
 
-	.  reduce 11 (src line 89)
+	.  reduce 8 (src line 69)
 
 
 state 24
-	between:  '(' elements.')' 
-	elements:  elements.',' value 
+	elements:  elements ','.value 
 
-	')'  shift 30
-	','  shift 29
+	String  shift 11
+	Number  shift 12
+	Literal  shift 13
+	'['  shift 16
 	.  error
 
+	array  goto 15
+	object  goto 14
+	expr  goto 3
+	value  goto 26
 
 state 25
-	object:  object JointType String OpType value.    (5)
+	between:  '(' elements ')'.    (7)
 
-	.  reduce 5 (src line 48)
+	.  reduce 7 (src line 63)
 
 
 state 26
-	object:  object JointType String '=' value.    (6)
+	elements:  elements ',' value.    (11)
 
-	.  reduce 6 (src line 56)
-
-
-state 27
-	object:  object JointType String OpTypeBetween between.    (7)
-
-	.  reduce 7 (src line 64)
+	.  reduce 11 (src line 79)
 
 
-state 28
-	array:  '[' elements ']'.    (9)
-
-	.  reduce 9 (src line 81)
-
-
-state 29
-	elements:  elements ','.value 
-
-	String  shift 10
-	Number  shift 11
-	Literal  shift 12
-	'['  shift 15
-	.  error
-
-	array  goto 14
-	object  goto 13
-	value  goto 31
-
-state 30
-	between:  '(' elements ')'.    (8)
-
-	.  reduce 8 (src line 75)
-
-
-state 31
-	elements:  elements ',' value.    (12)
-
-	.  reduce 12 (src line 91)
-
-
-15 terminals, 7 nonterminals
-18 grammar rules, 32/16000 states
+15 terminals, 8 nonterminals
+17 grammar rules, 27/16000 states
 1 shift/reduce, 0 reduce/reduce conflicts reported
-56 working sets used
-memory: parser 30/240000
-25 extra closures
-47 shift entries, 1 exceptions
-14 goto entries
-13 entries saved by goto default
-Optimizer space used: output 32/240000
-32 table entries, 0 zero
-maximum spread: 15, maximum offset: 29
+57 working sets used
+memory: parser 32/240000
+21 extra closures
+35 shift entries, 1 exceptions
+13 goto entries
+14 entries saved by goto default
+Optimizer space used: output 27/240000
+27 table entries, 0 zero
+maximum spread: 15, maximum offset: 24

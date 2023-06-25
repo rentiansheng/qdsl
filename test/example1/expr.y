@@ -23,7 +23,7 @@ import (
 %token <op> OpType JointType OpTypeBetween
 %type <val> array between
 %type <list> elements
-%type <obj> object input
+%type <obj> object input expr
 %type <val> value
 %type <op> OpType  JointType
 
@@ -36,45 +36,29 @@ input: object{
 
 }
 
-object: String OpType value {
-	$$ =  []map[string]interface{}{ {$1.(string): map[string]interface{}{ $2:   $3}}}
-
-	yylex.(*lex).state = lexStateJoint
-} | String '=' value {
-	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "=":   $3}}}
-	yylex.(*lex).state = lexStateJoint
-
-} |  String OpTypeBetween between {
-	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "between":   $3}}}
-	yylex.(*lex).state = lexStateJoint
-}| object JointType String OpType value {
+object: expr| object JointType expr {
    	obj := $$
-	obj = append(obj, map[string]interface{}{
-		$3.(string):map[string]interface{}{  $4:   $5},
-		 "op": $2})
+	obj = append(obj,
+		map[string]interface{}{"condition": $3},
+		 map[string]interface{}{"op": $2})
 	$$ = obj
 	yylex.(*lex).state = lexStateJoint
 
-} | object JointType String '=' value {
-    	obj := $$
-  	obj = append(obj,map[string]interface{}{
-  	$3.(string):map[string]interface{}{  "=":   $5},
-  	"op": $2})
-  	$$ = obj
-  	yylex.(*lex).state = lexStateJoint
-
-  }| object JointType String OpTypeBetween between{
-       	obj := $$
-     	obj = append(obj,map[string]interface{}{
-     	$3.(string):map[string]interface{}{  "=":   $5},
-     	"op": "between"})
-     	$$ = obj
-     	yylex.(*lex).state = lexStateJoint
-
-     }
+}
 
 
+expr: String OpType value {
+      	$$ =  []map[string]interface{}{ {$1.(string): map[string]interface{}{ $2:   $3}}}
 
+      	yylex.(*lex).state = lexStateJoint
+      } | String '=' value {
+      	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "=":   $3}}}
+      	yylex.(*lex).state = lexStateJoint
+
+      } |  String OpTypeBetween between {
+      	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "between":   $3}}}
+      	yylex.(*lex).state = lexStateJoint
+      }
 
 between : '(' elements ')' {
 	yylex.(*lex).state = LexStateValueElement
