@@ -26,6 +26,7 @@ const Number = 57347
 const Literal = 57348
 const OpType = 57349
 const JointType = 57350
+const OpTypeBetween = 57351
 
 var yyToknames = [...]string{
 	"$end",
@@ -36,9 +37,12 @@ var yyToknames = [...]string{
 	"Literal",
 	"OpType",
 	"JointType",
+	"OpTypeBetween",
 	"'='",
 	"'('",
 	"')'",
+	"'['",
+	"']'",
 	"','",
 }
 
@@ -48,7 +52,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line expr.y:90
+//line expr.y:106
 
 //line yacctab:1
 var yyExca = [...]int8{
@@ -59,44 +63,48 @@ var yyExca = [...]int8{
 
 const yyPrivate = 57344
 
-const yyLast = 25
+const yyLast = 32
 
 var yyAct = [...]int8{
-	8, 4, 9, 10, 11, 22, 23, 15, 14, 5,
-	16, 6, 17, 7, 3, 19, 1, 20, 21, 12,
-	2, 18, 13, 0, 24,
+	23, 17, 30, 22, 18, 29, 9, 16, 10, 11,
+	12, 28, 29, 5, 1, 7, 6, 15, 4, 8,
+	25, 26, 24, 27, 19, 3, 21, 20, 13, 2,
+	31, 14,
 }
 
 var yyPact = [...]int16{
-	10, -1000, -7, 2, 9, -2, -2, 3, -1000, 2,
-	-1000, -1000, -7, -1000, -2, -1000, -2, -2, -6, -1000,
-	-1000, -1000, -1000, -2, -1000,
+	21, -1000, 10, 6, 15, 4, 4, -7, 17, -1000,
+	6, -1000, -1000, 10, -1000, 4, -1000, -1000, 4, 4,
+	4, -7, -3, -1000, -10, -1000, -1000, -1000, -1000, 4,
+	-1000, -1000,
 }
 
 var yyPgo = [...]int8{
-	0, 22, 21, 19, 16, 0,
+	0, 31, 1, 3, 28, 14, 0,
 }
 
 var yyR1 = [...]int8{
-	0, 4, 3, 3, 3, 3, 1, 2, 2, 2,
-	5, 5, 5, 5, 5,
+	0, 5, 4, 4, 4, 4, 4, 4, 2, 1,
+	3, 3, 3, 6, 6, 6, 6, 6,
 }
 
 var yyR2 = [...]int8{
-	0, 1, 3, 3, 5, 5, 3, 0, 1, 3,
-	1, 1, 1, 1, 1,
+	0, 1, 3, 3, 3, 5, 5, 5, 3, 3,
+	0, 1, 3, 1, 1, 1, 1, 1,
 }
 
 var yyChk = [...]int16{
-	-1000, -4, -3, 4, 8, 7, 9, 4, -5, 4,
-	5, 6, -3, -1, 10, -5, 7, 9, -2, -5,
-	-5, -5, 11, 12, -5,
+	-1000, -5, -4, 4, 8, 7, 10, 9, 4, -6,
+	4, 5, 6, -4, -1, 13, -6, -2, 11, 7,
+	10, 9, -3, -6, -3, -6, -6, -2, 14, 15,
+	12, -6,
 }
 
 var yyDef = [...]int8{
-	0, -2, 1, 0, 0, 0, 0, 0, 2, 10,
-	11, 12, 13, 14, 7, 3, 0, 0, 0, 8,
-	4, 5, 6, 0, 9,
+	0, -2, 1, 0, 0, 0, 0, 0, 0, 2,
+	13, 14, 15, 16, 17, 10, 3, 4, 10, 0,
+	0, 0, 0, 11, 0, 5, 6, 7, 9, 0,
+	8, 12,
 }
 
 var yyTok1 = [...]int8{
@@ -104,13 +112,16 @@ var yyTok1 = [...]int8{
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	10, 11, 3, 3, 12, 3, 3, 3, 3, 3,
+	11, 12, 3, 3, 15, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 9,
+	3, 10, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 13, 3, 14,
 }
 
 var yyTok2 = [...]int8{
-	2, 3, 4, 5, 6, 7, 8,
+	2, 3, 4, 5, 6, 7, 8, 9,
 }
 
 var yyTok3 = [...]int8{
@@ -478,8 +489,13 @@ yydefault:
 
 		}
 	case 4:
-		yyDollar = yyS[yypt-5 : yypt+1]
+		yyDollar = yyS[yypt-3 : yypt+1]
 //line expr.y:47
+		{
+		}
+	case 5:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line expr.y:48
 		{
 			obj := yyVAL.obj
 			obj = append(obj, map[string]interface{}{
@@ -489,9 +505,9 @@ yydefault:
 			yylex.(*lex).state = lexStateJoint
 
 		}
-	case 5:
+	case 6:
 		yyDollar = yyS[yypt-5 : yypt+1]
-//line expr.y:55
+//line expr.y:56
 		{
 			obj := yyVAL.obj
 			obj = append(obj, map[string]interface{}{
@@ -501,35 +517,55 @@ yydefault:
 			yylex.(*lex).state = lexStateJoint
 
 		}
-	case 6:
+	case 7:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line expr.y:64
+		{
+			obj := yyVAL.obj
+			obj = append(obj, map[string]interface{}{
+				yyDollar[3].val.(string): map[string]interface{}{"=": yyDollar[5].val},
+				"op":                     "between"})
+			yyVAL.obj = obj
+			yylex.(*lex).state = lexStateJoint
+
+		}
+	case 8:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line expr.y:65
+//line expr.y:75
 		{
 			yylex.(*lex).state = LexStateValueElement
 			yyVAL.val = yyDollar[2].list
 			yylex.(*lex).state = lexStateJoint
 		}
-	case 7:
+	case 9:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line expr.y:81
+		{
+			yylex.(*lex).state = LexStateValueElement
+			yyVAL.val = yyDollar[2].list
+			yylex.(*lex).state = lexStateJoint
+		}
+	case 10:
 		yyDollar = yyS[yypt-0 : yypt+1]
-//line expr.y:71
+//line expr.y:87
 		{
 			yyVAL.list = []interface{}{}
 		}
-	case 8:
+	case 11:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line expr.y:73
+//line expr.y:89
 		{
 			yyVAL.list = []interface{}{yyDollar[1].val}
 		}
-	case 9:
+	case 12:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line expr.y:75
+//line expr.y:91
 		{
 			yyVAL.list = append(yyDollar[1].list, yyDollar[3].val)
 		}
-	case 13:
+	case 16:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line expr.y:82
+//line expr.y:98
 		{
 			yylex.(*lex).pushState()
 			yyVAL.val = yyDollar[1].obj

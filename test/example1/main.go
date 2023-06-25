@@ -95,6 +95,9 @@ func (l *lex) lexType(lval *yySymType) int {
 			lval.op = val
 		}
 		l.state = lexStateValue
+		if lval.op == opTypeBetweenFlag {
+			return OpTypeBetween
+		}
 		return OpType
 	case lexStateJoint:
 		str := fmt.Sprintf("%v", lval.val)
@@ -159,17 +162,22 @@ var literal = map[string]interface{}{
 	"null":  nil,
 }
 
+const opTypeBetweenFlag = "between"
+
 var opTypeRela = map[string]string{
-	">":  ">",
-	"<":  "<",
-	"!=": "!=",
-	">=": ">=",
-	"<=": "<=",
-	"in": "in",
+	">":               ">",
+	"<":               "<",
+	"!=":              "!=",
+	">=":              ">=",
+	"<=":              "<=",
+	"in":              "in",
+	opTypeBetweenFlag: opTypeBetweenFlag,
 }
 
 var symbolTypeRela = map[rune]bool{
 	'=': true,
+	'[': false,
+	']': false,
 	'(': false,
 	')': false,
 	',': false,
@@ -275,10 +283,11 @@ func main() {
 		"a < 1",
 		"a <= 1",
 		"a != 1",
-		`a = b and d in (1,2,3) and c = 2 `,
-		`a = b and d in (1,2,3) and c > 2 and d = 3 `,
-		`a = b and d in (1,2,3) and c > 2 and d != 3 `,
-		`a = b and d in (1,2,3) and c > 2 and d < 3 `,
+		`a = b and d in [1,2,3] and c = 2 `,
+		`a = b and d in [1,2,3] and c > 2 and d = 3 `,
+		`a = b and d in [1,2,3] and c > 2 and d != 3 `,
+		`a = b and d in [1,2,3] and c > 2 and d < 3 `,
+		`a = b and d between (1,3) and c > 2 and d <= 3 `,
 	}
 	for _, sql := range sqlArr {
 		l := newLex([]byte(sql + " "))
