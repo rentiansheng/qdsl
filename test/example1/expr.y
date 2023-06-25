@@ -45,6 +45,8 @@ object: String OpType value {
 	yylex.(*lex).state = lexStateJoint
 
 } |  String OpTypeBetween between {
+	$$ =  []map[string]interface{}{{$1.(string): map[string]interface{}{ "between":   $3}}}
+	yylex.(*lex).state = lexStateJoint
 }| object JointType String OpType value {
    	obj := $$
 	obj = append(obj, map[string]interface{}{
@@ -70,6 +72,8 @@ object: String OpType value {
      	yylex.(*lex).state = lexStateJoint
 
      }
+
+
 
 
 between : '(' elements ')' {
